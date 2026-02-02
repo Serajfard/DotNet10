@@ -9,6 +9,7 @@ ASP.NET Core backend with:
 ## Run locally
 ```bash
 docker compose up --build
+```
 
 
 Swagger : http://localhost:8080/swagger/index.html
