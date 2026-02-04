@@ -24,7 +24,7 @@ jobs:
     # runs-on: ubuntu-latest
     runs-on: [self-hosted, linux, arm64, pi]
     container:
-      image: mcr.microsoft.com/dotnet/sdk:10.0
+      image: mcr.microsoft.com/dotnet/sdk:10.0.102
 
     steps:
       # 1. Checkout source
