@@ -19,41 +19,39 @@ jobs:
           docker --version
 
 
+  build-test:
+    name: Build & Test
+    # runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, arm64, pi]
 
-# jobs:
-#   build-test:
-#     name: Build & Test
-#     # runs-on: ubuntu-latest
-#     runs-on: [self-hosted, linux, arm64, pi]
+    steps:
+      # 1. Checkout source
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-#     steps:
-#       # 1. Checkout source
-#       - name: Checkout repository
-#         uses: actions/checkout@v4
+      # 2. Setup .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
 
-#       # 2. Setup .NET SDK
-#       - name: Setup .NET
-#         uses: actions/setup-dotnet@v4
-#         with:
-#           dotnet-version: '10.0.x'
+      # 3. Cache NuGet packages
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
 
-#       # 3. Cache NuGet packages
-#       - name: Cache NuGet packages
-#         uses: actions/cache@v4
-#         with:
-#           path: ~/.nuget/packages
-#           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
-#           restore-keys: |
-#             nuget-${{ runner.os }}-
+      # 4. Restore dependencies
+      - name: Restore
+        run: dotnet restore DemoApi.sln
 
-#       # 4. Restore dependencies
-#       - name: Restore
-#         run: dotnet restore DemoApi.sln
+      # 5. Build (no restore again)
+      - name: Build
+        run: dotnet build DemoApi.sln --no-restore --configuration Release
 
-#       # 5. Build (no restore again)
-#       - name: Build
-#         run: dotnet build DemoApi.sln --no-restore --configuration Release
-
-#       # 6. Run tests
-#       - name: Test
-#         run: dotnet test DemoApi.Tests/DemoApi.Tests.csproj --no-build --configuration Release
+      # 6. Run tests
+      - name: Test
+        run: dotnet test DemoApi.Tests/DemoApi.Tests.csproj --no-build --configuration Release
