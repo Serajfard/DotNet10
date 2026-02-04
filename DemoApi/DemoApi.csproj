@@ -10,6 +10,8 @@
 
     <!-- 🔥 THIS IS THE MISSING PIECE -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- IMPORTANT: we do not use resx files -->
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
 
   <ItemGroup>
