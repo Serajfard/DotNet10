@@ -24,7 +24,7 @@ jobs:
     # runs-on: ubuntu-latest
     runs-on: [self-hosted, linux, arm64, pi]
     container:
-      image: mcr.microsoft.com/dotnet/sdk:10.0.102
+      image: mcr.microsoft.com/dotnet/sdk:9.0.310
 
     steps:
       # 1. Checkout source
@@ -42,7 +42,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-net9-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             nuget-${{ runner.os }}-
 
@@ -56,4 +56,6 @@ jobs:
 
       # 6. Run tests
       - name: Test
-        run: dotnet test DemoApi.Tests/DemoApi.Tests.csproj --no-build --configuration Release
+        # run: dotnet test DemoApi.Tests/DemoApi.Tests.csproj --no-build --configuration Release
+        run : dotnet test DemoApi.sln --configuration Release --no-restore
+

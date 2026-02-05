@@ -14,7 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
-builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -35,10 +34,24 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("Default")
-    ));
+// builder.Services.AddDbContext<AppDbContext>(options =>
+//     options.UseNpgsql(
+//         builder.Configuration.GetConnectionString("Default")
+//     ));
+
+if (builder.Environment.IsEnvironment("Test"))
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("TestDb"));
+}
+else
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+
+    builder.Services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("db");
+}
+
 
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -80,7 +93,11 @@ builder.Services.AddAuthorization(options =>
 });
 
 
-builder.Services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("db");
+
+// if (!builder.Environment.IsEnvironment("Test"))
+// {
+//     builder.Services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("db");
+// }
 
 var app = builder.Build();
 
@@ -102,7 +119,6 @@ app.UseAuthorization();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    // app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -113,22 +129,28 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
-app.MapHealthChecks("/health/live", new HealthCheckOptions
+if (!app.Environment.IsEnvironment("Test"))
 {
-    Predicate = _ => false
-});
+    app.MapHealthChecks("/health/live", new HealthCheckOptions
+    {
+        Predicate = _ => false
+    });
 
-app.MapHealthChecks("/health/ready", new HealthCheckOptions
-{
-    Predicate = check => check.Name == "db",
-    ResultStatusCodes =
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions
+    {
+        Predicate = check => check.Name == "db",
+        ResultStatusCodes =
     {
         [HealthStatus.Healthy] = StatusCodes.Status200OK,
         [HealthStatus.Degraded] = StatusCodes.Status503ServiceUnavailable,
         [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
     }
-});
+    });
+}
+
+
 
 
 app.Run();
 
+public partial class Program { }

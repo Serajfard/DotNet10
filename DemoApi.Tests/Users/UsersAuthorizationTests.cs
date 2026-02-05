@@ -40,6 +40,11 @@ public class UsersAuthorizationTests
         var response = await _client.GetAsync("/users");
 
         // Assert
+        // Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(body);
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
