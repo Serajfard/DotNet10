@@ -5,15 +5,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <!-- 🔥 Disable only implicit RESX discovery -->
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-
-    <!-- ✅ Keep normal source & content discovery -->
-    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
-    <EnableDefaultContentItems>true</EnableDefaultContentItems>
-
-    <!-- OpenAPI / XML -->
+      <!-- 🔥 DISABLE ALL BUILT-IN OPENAPI GENERATORS -->
     <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+
+    <!-- 🔥 THIS IS THE MISSING PIECE -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
