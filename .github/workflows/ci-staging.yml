@@ -2,60 +2,37 @@ name: CI - Staging
 
 on:
   push:
-    branches:
-      - staging
+    branches: [staging]
   pull_request:
-    branches:
-      - staging
+    branches: [staging]
 
 jobs:
-  runner-check:
-    runs-on: [self-hosted, linux, arm64, pi]
-    steps:
-      - name: Show runner info
-        run: |
-          hostname
-          whoami
-          docker --version
-
-
   build-test:
-    name: Build & Test
-    # runs-on: ubuntu-latest
-    runs-on: [self-hosted, linux, arm64, pi]
-    container:
-      image: mcr.microsoft.com/dotnet/sdk:9.0.310
+    runs-on: [self-hosted, macOS, X64]
 
     steps:
-      # 1. Checkout source
-      - name: Checkout repository
+      - name: Runner info
+        run: |
+          uname -a
+          dotnet --info
+          docker --version || true
+
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Setup .NET SDK
-      # - name: Setup .NET
-      #   uses: actions/setup-dotnet@v4
-      #   with:
-      #     dotnet-version: '10.0.x'
-
-      # 3. Cache NuGet packages
-      - name: Cache NuGet packages
+      - name: Cache NuGet
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-net9-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-net10-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             nuget-${{ runner.os }}-
 
-      # 4. Restore dependencies
       - name: Restore
         run: dotnet restore DemoApi.sln
 
-      # 5. Build (no restore again)
       - name: Build
-        run: dotnet build DemoApi.sln --no-restore --configuration Release
+        run: dotnet build DemoApi.sln --configuration Release --no-restore
 
-      # 6. Run tests
       - name: Test
-        # run: dotnet test DemoApi.Tests/DemoApi.Tests.csproj --no-build --configuration Release
-        run : dotnet test DemoApi.sln --configuration Release --no-restore
-
+        run: dotnet test DemoApi.sln --configuration Release --no-build
