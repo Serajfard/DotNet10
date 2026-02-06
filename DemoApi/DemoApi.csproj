@@ -31,7 +31,20 @@
   <!-- Avoid runner error: MSB3552 on "**/*.resx" -->
   <ItemGroup>
     <EmbeddedResource Remove="**/*.resx" />
+    <EmbeddedResource Remove="'**/*.resx'" />
     <EmbeddedResource Include="Resources/Resources.resx" />
+  </ItemGroup>
+
+  <!-- Remove misquoted wildcards injected by parent builds -->
+  <ItemGroup>
+    <Compile Remove="'**/*.cs'" />
+    <Compile Remove="'**/*.razor'" />
+    <Compile Remove="'**/*.cshtml'" />
+    <!-- In case non-Compile items were mistakenly added to Compile -->
+    <None Remove="'**/*.cshtml'" />
+    <Content Remove="'**/*.cshtml'" />
+    <None Remove="'**/*.razor'" />
+    <Content Remove="'**/*.razor'" />
   </ItemGroup>
 
 </Project>
