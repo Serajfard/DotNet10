@@ -10,6 +10,10 @@
 
     <!-- 🔥 THIS IS THE MISSING PIECE -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <EnableDefaultContentItems>true</EnableDefaultContentItems>
+
   </PropertyGroup>
 
   <ItemGroup>
