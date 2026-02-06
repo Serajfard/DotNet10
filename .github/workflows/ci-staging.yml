@@ -17,6 +17,11 @@ jobs:
           dotnet --info
           docker --version || true
 
+      - name: Setup .NET SDK 10.0.102
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.102
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -32,7 +37,17 @@ jobs:
         run: dotnet restore DemoApi.sln
 
       - name: Build
-        run: dotnet build DemoApi.sln --configuration Release --no-restore
+        run: |
+          dotnet build DemoApi.sln \
+            --configuration Release \
+            --no-restore \
+            /p:ImportDirectoryBuildProps=false \
+            /p:ImportDirectoryBuildTargets=false
 
       - name: Test
-        run: dotnet test DemoApi.sln --configuration Release --no-build
+        run: |
+          dotnet test DemoApi.sln \
+            --configuration Release \
+            --no-build \
+            /p:ImportDirectoryBuildProps=false \
+            /p:ImportDirectoryBuildTargets=false
