@@ -10,6 +10,10 @@
 
     <!-- 🔥 THIS IS THE MISSING PIECE -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+    <!-- Prevent importing parent Directory.Build props/targets that may add duplicate globs -->
+    <ImportDirectoryBuildProps>false</ImportDirectoryBuildProps>
+    <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
   </PropertyGroup>
 
   <ItemGroup>
